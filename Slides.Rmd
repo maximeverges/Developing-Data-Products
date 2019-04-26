@@ -1,0 +1,72 @@
+---
+title: Developing Data Products course - Shiny Application and Reproducible Pitch
+author: "Maxime Verges"
+date: "26th of April, 2019"
+output:
+  revealjs::revealjs_presentation:
+    theme: league
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+## Introduction
+
+- This presentation is included in the last assignment from the online course ***Developing Data Products*** (<https://www.coursera.org/learn/data-products>) 
+
+- The main challenge of these slides is to provide some key information regarding the course project 
+
+- Due to te requirements, it has been generated using ***RStudio*** (<https://www.rstudio.com>) and ***Slidify*** (<http://slidify.org>)
+
+## Application
+
+- The main challenge is to create an application. I decided to create an application using the dataset *'mtcars'* to predict the consumption regarding the other factors.Hence I deciced to name my application ***MPG Prediction***.
+
+- A Random Forest prediction model is generated, based on parameters such as the type of transmission. This application is dedicated to the users as they can play with all the parameters to predict the consumption of their car.
+
+- The application and the current presentation source codes can be found at <https://github.com/maximeverges/Developing-Data-Products>. 3 files are included: *ui.R*, *server.R* and *RD_model.R*.
+
+## Dataset
+
+The dataset which has been used by the application is the [Motor Trend Car Road Tests](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html) which is called *'mtcars'* in R. The dataset highlights the fuel consumption regarding 10 factors concerning 32 automobiles. The structure is detailed:
+
+```{r cars, echo = TRUE}
+str(mtcars)
+```
+
+## Prediction model
+
+A Random Forest prediction model is prefered. The aim is to predict the fuel consumption (***mpg*** variable) regarding the other variables:
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+library(caret)
+library(randomForest)
+```
+
+```{r echo = TRUE, results='hide'}
+data("mtcars")
+dataStructure <- capture.output(str(mtcars))
+set.seed(12345)
+
+training_control <- trainControl(method = "cv", number = 10)
+
+random_forest_model <- function() {
+  return(
+    train(
+      mpg ~ ., 
+      data = mtcars,
+      method = "rf",
+      trControl = training_control
+    )
+  )
+  
+}
+
+random_forest_predicition <- function(model, parameters) {
+  
+  prediction <- predict(
+    model,
+    newdata = parameters
+  )
+  return(prediction)
+}
+```
